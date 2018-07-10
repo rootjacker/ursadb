@@ -12,7 +12,15 @@
 
 DatasetBuilder::DatasetBuilder(BuilderType builder_type, const std::vector<IndexType> &index_types)
         : builder_type(builder_type), index_types(index_types) {
-    clear();
+    for (const auto &index_type : index_types) {
+        if (builder_type == BuilderType::FLAT) {
+            indices.emplace_back(new FlatIndexBuilder(index_type));
+        } else if (builder_type == BuilderType::BITMAP) {
+            indices.emplace_back(new BitmapIndexBuilder(index_type));
+        } else {
+            throw std::runtime_error("unhandled builder type");
+        }
+    }
 }
 
 FileId DatasetBuilder::register_fname(const std::string &fname) {
@@ -35,6 +43,7 @@ void DatasetBuilder::save(const fs::path &db_base, const std::string &fname) {
     }
 
     store_dataset(db_base, fname, index_names, fids);
+    fids.clear();
 }
 
 void DatasetBuilder::force_registered(const std::string &filepath) {
@@ -68,21 +77,6 @@ bool DatasetBuilder::must_spill() {
         }
     }
     return false;
-}
-
-void DatasetBuilder::clear() {
-    indices.clear();
-    fids.clear();
-
-    for (const auto &index_type : index_types) {
-        if (builder_type == BuilderType::FLAT) {
-            indices.emplace_back(new FlatIndexBuilder(index_type));
-        } else if (builder_type == BuilderType::BITMAP) {
-            indices.emplace_back(new BitmapIndexBuilder(index_type));
-        } else {
-            throw std::runtime_error("unhandled builder type");
-        }
-    }
 }
 
 const char *invalid_filename_error::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_USE_NOEXCEPT {

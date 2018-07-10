@@ -16,7 +16,6 @@ class DatasetBuilder {
     void save(const fs::path &db_base, const std::string &fname);
     bool must_spill();
     bool empty() const { return fids.empty(); }
-    void clear();
 
   private:
     BuilderType builder_type;

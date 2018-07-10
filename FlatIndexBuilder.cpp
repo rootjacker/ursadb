@@ -8,13 +8,11 @@
 
 #include "Utils.h"
 
-constexpr int reserve_ints = 1024;
-constexpr int max_files = 256;
+constexpr int max_files = 12;
 
 
 FlatIndexBuilder::FlatIndexBuilder(IndexType ntype)
     : IndexBuilder(ntype), added_trigrams(), raw_data() {
-    raw_data.reserve(reserve_ints);
 }
 
 void FlatIndexBuilder::add_trigram(FileId fid, TriGram val) {
@@ -77,6 +75,7 @@ void FlatIndexBuilder::save(const std::string &fname) {
     }
 
     out.write((char *)offsets.data(), (NUM_TRIGRAMS + 1) * sizeof(uint64_t));
+    raw_data.clear();
 }
 
 void FlatIndexBuilder::add_file(FileId fid, const uint8_t *data, size_t size) {
@@ -85,7 +84,7 @@ void FlatIndexBuilder::add_file(FileId fid, const uint8_t *data, size_t size) {
         throw std::out_of_range("fid");
     }
 
-    std::fill(added_trigrams.begin(), added_trigrams.end(), 0);
+    std::fill(added_trigrams.begin(), added_trigrams.end(), false);
     TrigramGenerator generator = get_generator_for(index_type());
     generator(data, size, [&](TriGram val) { add_trigram(fid, val); });
 }

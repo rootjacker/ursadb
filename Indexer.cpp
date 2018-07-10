@@ -76,8 +76,6 @@ void Indexer::make_spill(DatasetBuilder &builder) {
             stop = true;
         }
     }
-
-    builder.clear();
 }
 
 OnDiskDataset *Indexer::force_compact() {

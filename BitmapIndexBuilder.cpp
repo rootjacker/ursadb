@@ -58,6 +58,7 @@ void BitmapIndexBuilder::save(const std::string &fname) {
     offsets[NUM_TRIGRAMS] = offset;
 
     out.write((char *)offsets.data(), (NUM_TRIGRAMS + 1) * sizeof(uint64_t));
+    std::fill(raw_data.begin(), raw_data.end(), 0);
 }
 
 void BitmapIndexBuilder::add_file(FileId fid, const uint8_t *data, size_t size) {
