@@ -8,7 +8,7 @@
 
 #include "Utils.h"
 
-constexpr int max_files = 12;
+constexpr int max_files = 256;
 
 
 FlatIndexBuilder::FlatIndexBuilder(IndexType ntype)
